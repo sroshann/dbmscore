@@ -8,6 +8,7 @@ const app = express()
 const server = createServer( app )
 dotenv.config()
 import authRouter from './routes/ath.route.js'
+import adminRouter from './routes/admin.route.js'
 
 app.use( express.json() )
 app.use( cookieParser() )
@@ -19,6 +20,7 @@ app.use( cors({
 }) )
 
 app.use('/authenticate', authRouter)
+app.use('/admin', adminRouter)
 
 // No need for vercel
 server.listen( process.env.PORT || 5000, () => {

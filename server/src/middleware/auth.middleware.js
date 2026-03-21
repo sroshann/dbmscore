@@ -1,22 +1,19 @@
 import jwt from 'jsonwebtoken'
-import { UserModel } from '../model/user.model.js'
 
 // Protecting user function routes on checking the presence of token
-export const protectPlyrRoutes = async ( request, response, next ) => {
+export const adminRoute = async ( request, response, next ) => {
 
     try {
 
-        const { token } = request.body
+        const token = request.cookies.Token
         if( token ) {
 
             const decode = jwt.verify( token, process.env.JWT_SECRET )
             if( decode ) {
 
-                const { userId } = decode
-                const user = await UserModel.findById( userId ).select('-password -__v -updatedAt')
-                console.log( user )
-                request.user = user
-                next() 
+                const { userid, role } = decode
+                if( role === 'a' ) next()
+                else return response?.status( 401 ).json({ error : 'Unauthorized' })
 
             }
             else return response.status( 401 ).json({ error : 'Invalid token' })
