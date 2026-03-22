@@ -1,6 +1,6 @@
 import express from "express";
-import { adminRoute } from "../middleware/auth.middleware.js";
 import { getCmpnys, getStds, regCompany, regStudent } from "../controller/admin.ctrl.js";
+import { adminRoute } from "../middleware/middleware.js";
 const router = express.Router()
 
 router.post('/registerStd', adminRoute, regStudent)
