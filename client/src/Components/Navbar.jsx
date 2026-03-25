@@ -21,43 +21,51 @@ const Logo = () => (
 
 );
 
-const navLinks = [
-
-    { label: "Find Jobs", badge: "50K+" },
-    { label: "Companies" },
-    { label: "Candidates" },
-    { label: "Blog" },
-    { label: "About" },
-
-];
-
 const Navbar = () => {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [activeLink, setActiveLink] = useState("Find Jobs");
-    const [scrolled] = useState(false);
 
-    const { isAuthenticated } = useSelector( state => state.auth )
+    const { isAuthenticated, userData } = useSelector(state => state.auth)
     const navigate = useNavigate()
     const logout = useLogout()
     const handleAuth = () => {
 
-        if( isAuthenticated ) logout()
+        if (isAuthenticated) logout()
         else navigate('/login')
 
     }
 
+    const navLinks = [
+
+        userData?.role === 's' ? { label: "Find Jobs", badge: "50K+" } : {},
+        userData?.role === 'a' ? { label: "Companies" } : {},
+        userData?.role === 'a' ? { label: "Students", destination : '/listStudent' } : {},
+        userData?.role === 'a' ? { label: "Job requests" } : {},
+        userData?.role === 'a' ? { label: "Approved jobs" } : {},
+
+    ];
+
+    const C = {
+        darkest: "#071e3d",
+        dark: "#0a2a56",
+        main: "#1565c0",
+        mid: "#1a4f8a",
+        light: "#42a5f5",
+        lighter: "#64b5f6",
+        ghost: "#90caf9",
+        accent: "#00e5ff",
+    };
+
     return (
-        
+
         <div style={{ fontFamily: "'Nunito', sans-serif" }}>
 
             {/* ── Main Navbar ── */}
             <nav
                 className="w-full relative z-50 transition-all duration-300"
                 style={{
-                    background: scrolled
-                        ? "rgba(13,71,161,0.97)"
-                        : "linear-gradient(135deg, #1a4f8a 0%, #1565c0 60%, #0d47a1 100%)",
+                    background: !isAuthenticated ? `#1a4f8a` : "linear-gradient(135deg, #1a4f8a 0%, #1565c0 60%, #0d47a1 100%)",
                     boxShadow: "0 4px 24px rgba(13,71,161,0.25)",
                     backdropFilter: "blur(12px)",
                 }}
@@ -79,10 +87,10 @@ const Navbar = () => {
 
                         {/* Desktop Nav Links */}
                         <ul className="hidden lg:flex items-center gap-1">
-                            {navLinks.map(({ label, badge }) => (
+                            {navLinks.map(({ label, badge, destination }) => (
                                 <li key={label}>
                                     <button
-                                        onClick={() => setActiveLink(label)}
+                                        onClick={() => navigate( destination ) }
                                         className="relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
                                         style={{
                                             color: activeLink === label ? "#fff" : "rgba(255,255,255,0.72)",
@@ -112,38 +120,46 @@ const Navbar = () => {
                         {/* Desktop CTA Buttons */}
                         <div className="hidden lg:flex items-center gap-3">
                             {/* Post a Job */}
-                            <button
-                                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:-translate-y-0.5"
-                                style={{
-                                    background: "rgba(255,255,255,0.12)",
-                                    color: "#fff",
-                                    border: "1px solid rgba(255,255,255,0.22)",
-                                }}
-                            >
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                                    <path d="M12 5v14M5 12h14" />
-                                </svg>
-                                Post a Job
-                            </button>
+                            {
+
+                                isAuthenticated && userData?.role === 'c' && <button
+                                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:-translate-y-0.5"
+                                    style={{
+                                        background: "rgba(255,255,255,0.12)",
+                                        color: "#fff",
+                                        border: "1px solid rgba(255,255,255,0.22)",
+                                    }}
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                        <path d="M12 5v14M5 12h14" />
+                                    </svg>
+                                    Post a Job
+                                </button>
+
+                            }
 
                             {/* Sign In */}
                             <button
-                                className="px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:-translate-y-0.5"
+                                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:-translate-y-0.5"
                                 style={{ color: "rgba(255,255,255,0.85)", background: "transparent" }}
-                                onClick={ handleAuth }
-                            >{ isAuthenticated ? 'Logout' : 'Login' }</button>
+                                onClick={handleAuth}
+                            >{isAuthenticated ? 'Logout' : 'Login'}</button>
 
                             {/* Register */}
-                            <button
-                                className="px-5 py-2 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
-                                style={{
-                                    background: "#fff",
-                                    color: "#1565c0",
-                                    boxShadow: "0 4px 14px rgba(255,255,255,0.2)",
-                                }}
-                            >
-                                Get Started
-                            </button>
+                            {
+
+                                !isAuthenticated && <button
+                                    className="px-5 py-2 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
+                                    style={{
+                                        background: "#fff",
+                                        color: "#1565c0",
+                                        boxShadow: "0 4px 14px rgba(255,255,255,0.2)",
+                                    }}
+                                >
+                                    Get Started
+                                </button>
+
+                            }
                         </div>
 
                         {/* Mobile Hamburger */}

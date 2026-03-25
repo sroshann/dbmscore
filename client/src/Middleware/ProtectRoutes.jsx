@@ -9,3 +9,13 @@ export const ProtectAuth = ({ children }) => {
     return children
 
 }
+
+// Protecting admin routes
+export const ProtectAdmin = ({ children }) => {
+
+    const { isAuthenticated, userData } = useSelector( state => state.auth )
+
+    if( isAuthenticated && userData?.role === 'a' ) return children
+    else return <Navigate to={'/'} replace />
+
+}
