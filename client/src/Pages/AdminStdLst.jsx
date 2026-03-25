@@ -4,6 +4,7 @@ import Topbar from "../Components/Topbar";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { useGetStudents } from "../Hooks/admin.hook";
+import AddStudent from "../Components/AddStudent";
 
 const C = {
     darkest: "#071e3d",
@@ -19,15 +20,9 @@ const C = {
 
 const AdminStdLst = () => {
     
-    const [deleteTarget, setDeleteTarget] = useState(null);
     const [search, setSearch] = useState("");
     const [ students, setStudents ] = useState(null)
-
-
-    // const handleAdd = (student) => { setStudents(p => [student, ...p]); showToast("Student added successfully!", "success"); };
-    // const handleDelete = () => { setStudents(p => p.filter(s => s.id !== deleteTarget.id)); setDeleteTarget(null); showToast("Student removed.", "info"); };
-    // const toggleStatus = (id) => { setStudents(p => p.map(s => s.id === id ? { ...s, status: s.status === "Active" ? "Inactive" : "Active" } : s)); showToast("Status updated.", "success"); };
-
+    const [ addStd, setAddStd ] = useState( false )
     const getStudent = useGetStudents()
     const getData = async () => {
 
@@ -35,22 +30,22 @@ const AdminStdLst = () => {
         setStudents( data )
 
     }
-
     useEffect( () => { getData() }, [] )
 
     return (
         <>
 
             <Navbar />
-            <Topbar title="Students"  setSidebarOpen={() => { }}>
+            <Topbar title="Students" >
                 <Search value={search} onChange={e => setSearch(e.target.value)} placeholder="Search students…" />
-                <button onClick={() => setModal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5 flex-shrink-0"
+                <button onClick={ () => setAddStd( true ) } className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5 flex-shrink-0"
                     style={{ background: `linear-gradient(135deg,${C.main},${C.mid})`, boxShadow: `0 4px 16px rgba(21,101,192,0.35)` }}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
-                    <span className="hidden sm:inline">Add Student</span>
+                    <span className="hidden sm:inline" >Add Student</span>
                 </button>
             </Topbar>
 
+            { addStd && <AddStudent close={ setAddStd } /> }
             <div className="p-6">
 
                 {/* Table */}

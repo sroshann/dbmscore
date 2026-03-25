@@ -6,7 +6,7 @@ export const regStudent = async (request, response) => {
 
     try {
 
-        let { firstName, lastName, dob, age, department, roll_number, cgpa, password, email } = request?.body
+        let { firstName, lastName, dob, department, roll_number, cgpa, password, email } = request?.body
 
         const student = await query('select * from students where roll_number = $1 or email = $2', [roll_number, email])
         if (student?.length > 0) return response.status(500).json({ error: 'Student already exists' })
@@ -20,14 +20,13 @@ export const regStudent = async (request, response) => {
 
         }
 
-        age = Number(age)
-        cgpa = Number(cgpa)
+        cgpa = parseFloat(cgpa)
         const result = await query(
 
             `INSERT INTO students
-            (first_name, last_name, date_of_birth, age, department, roll_number, cgpa, password, email)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id, roll_number, password`,
-            [firstName, lastName, dob, age, department, roll_number, cgpa, password, email]
+            (first_name, last_name, date_of_birth, department, roll_number, cgpa, password, email)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) returning id, roll_number, password`,
+            [firstName, lastName, dob, department, roll_number, cgpa, password, email]
 
         )
 
